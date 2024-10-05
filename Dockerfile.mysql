@@ -1,0 +1,11 @@
+FROM mysql:8.2.0
+
+# Set environment variables
+ENV MYSQL_ROOT_PASSWORD=root
+ENV MYSQL_DATABASE=APP_DB
+
+# Expose the MySQL port
+EXPOSE 3306
+
+# Run the MySQL server
+CMD ["mysqld"]

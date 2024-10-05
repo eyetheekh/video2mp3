@@ -1,0 +1,23 @@
+FROM python:3.10-slim-bookworm
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the requirements file first to take advantage of Docker caching
+COPY requirements.txt .
+
+# Install the Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the entire project into the container
+COPY . .
+
+# Expose port 8000 for FastAPI
+EXPOSE 8000
+
+# Run Uvicorn to serve the FastAPI app using the load_app function
+CMD ["uvicorn", "api.defaults.load_app:load_app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4", "--reload"]

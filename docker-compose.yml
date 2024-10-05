@@ -1,0 +1,18 @@
+version: "3.8" # Specify the version of Docker Compose
+
+services:
+  mysql:
+    image: mysql_video2mp3 # Assign a custom name to the built image
+    build:
+      context: . # Path to the directory containing the Dockerfile
+      dockerfile: Dockerfile.mysql # Name of the Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: APP_DB # Create the APP_DB database on startup
+    ports:
+      - "3306:3306" # Map host port 3306 to container port 3306
+    volumes:
+      - mysql_data:/var/lib/mysql # Persist MySQL data
+
+volumes:
+  mysql_data: # Create a named volume for MySQL data persistence

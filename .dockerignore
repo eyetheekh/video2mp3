@@ -1,0 +1,48 @@
+# Ignore Python compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.whl
+
+# Ignore virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+.venv.bak/
+pyenv/
+
+# Ignore database files
+*.sqlite3
+db.sqlite3
+*.db
+
+# Ignore local environment files
+*.env
+*.local
+*.json
+
+# Ignore cache and logs
+*.log
+*.pot
+*.mo
+*.orig
+*.coverage
+.coverage.*
+
+# Ignore IDE and editor files
+.vscode/
+.idea/
+*.iml
+
+# Ignore other unnecessary files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.bak
+*.tmp

@@ -2,17 +2,13 @@ from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from api.db.make_or_test_db import make_or_test_db_connection
 from .router import default_router
-import logging
-
-# Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-)
+from api import logging
 
 
 class FastAPIApp:
     def __init__(self):
+        logging.info("Initializing FastAPI app...")
+
         self.app = FastAPI(
             title="Video2MP3",
             description="This is a FastAPI Microservice",
@@ -24,37 +20,38 @@ class FastAPIApp:
             redoc_url="/redoc",
             openapi_url="/openapi.json",
         )
+
+        # Configure CORS
         self.configure_cors()
+
+        # Include routers
         self.include_routers()
 
+        # Connect to the database
         db_connection_result = self.connect_to_db()
         if db_connection_result:
-            logging.info(db_connection_result)
+            logging.info(f"Database status: {db_connection_result}")
 
-        logging.info("FastAPI app initialized")
+        logging.info("FastAPI app initialized successfully.")
 
     def connect_to_db(self) -> str:
         """Connect to the database and return the status."""
         try:
             connection_info = make_or_test_db_connection()
-            logging.critical("Database connection check: %s", connection_info)
+            if connection_info["connection"] == "success":
+                logging.success(f"Database connection successful: {connection_info}")
+            else:
+                logging.critical(f"Database connection failed: {connection_info}")
             return connection_info.get(
                 "message", "Database connection check completed."
             )
         except Exception as e:
-            logging.error("Error connecting to the database: %s", e)
+            logging.error(f"Error connecting to the database: {e}")
             return "Failed to connect to the database."
 
     def configure_cors(self) -> None:
         """Configure CORS settings for the application."""
-        origins = [
-            "http://localhost",
-            "http://localhost:8000",
-            "http://localhost:3000",
-            "http://localhost:3001",
-            "http://localhost:4000",
-            "http://localhost:19006",
-        ]
+        origins = ["*"]
 
         self.app.add_middleware(
             CORSMiddleware,
@@ -63,7 +60,7 @@ class FastAPIApp:
             allow_methods=["*"],
             allow_headers=["*"],
         )
-        logging.info("CORS configured with origins: %s", origins)
+        logging.info(f"CORS configured with allowed origins: {origins}")
 
     def include_routers(self) -> None:
         """Include routers in the FastAPI application."""
@@ -77,11 +74,9 @@ class FastAPIApp:
                 self.app.include_router(endpoint_router, prefix="/endpoints")
                 logging.info("Included endpoints router with prefix '/endpoints'")
         except ImportError as e:
-            logging.error("Could not import endpoints router: %s", e)
+            logging.critical(f"Could not import endpoints router: {e}")
         except Exception as e:
-            logging.error(
-                "An error occurred while including the endpoints router: %s", e
-            )
+            logging.error(f"An error occurred while including the endpoints router: {e}")
 
     def return_app(self) -> FastAPI:
         """Return the FastAPI app instance."""

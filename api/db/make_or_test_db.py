@@ -1,59 +1,65 @@
-import os
-import mysql.connector
-import logging
-from api.config.load_config import load_db_config
+import uuid
+from sqlmodel import SQLModel, Field, create_engine, Session
+from api import APP_DB_CONFIG, logging
+from api.db.models import User  # Ensure User is imported
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
 
+def get_database_url():
+    """
+    Returns the database URL based on the provided APP_DB_CONFIG.
+    If APP_DB_CONFIG is not defined or does not contain a valid config,
+    it defaults to SQLite.
+    """
+    config = APP_DB_CONFIG
+
+    if not config:
+        # Default to SQLite
+        logging.info("No valid config found, defaulting to SQLite.")
+        return "sqlite:///./app_db.db"
+
+    elif "mysql" in config:
+        mysql_config = config["mysql"]
+        return f"mysql+mysqlconnector://{mysql_config['user']}:{mysql_config['password']}@{mysql_config['host']}:{mysql_config['port']}/{mysql_config['database_name']}"
+
+    elif "postgres" in config:
+        postgres_config = config["postgres"]
+        return f"postgresql+psycopg2://{postgres_config['user']}:{postgres_config['password']}@{postgres_config['host']}:{postgres_config['port']}/{postgres_config['database_name']}"
 
 def make_or_test_db_connection():
-    connection = None
+    """
+    Test the database connection and create the database if necessary.
+    """
+
+    def create_db_and_tables():
+        """
+        Create the database and tables if they do not exist.
+        Ensure that user the model is imported in the same module to be registered in the sqlmodel metadata.
+        """
+        SQLModel.metadata.create_all(engine)
+
     try:
-        # Load the configuration from the YAML file
-        config_path = os.path.join(os.path.dirname(__file__), "../config/configs.yml")
-        print(f"Loading db configuration from: {config_path}")
-        config = load_db_config(config_path)
+        # Create the database engine
+        database_url = get_database_url()
+        engine = create_engine(database_url, echo=True)  # Ensure engine is created
 
-        connection = mysql.connector.connect(
-            host=config["mysql"]["host"],
-            user=config["mysql"]["user"],
-            password=config["mysql"]["password"],
-            port=config["mysql"]["port"],
-        )
-
-        if connection.is_connected():
+        # Test the connection and create tables
+        with Session(engine) as session:
             logging.info("Successfully connected to the database.")
-            db_name = config["mysql"]["database_name"]
-            cursor = connection.cursor()
-            cursor.execute("SHOW DATABASES")
-            databases = cursor.fetchall()
-            db_exists = any(db[0] == db_name for db in databases)
 
-            if not db_exists:
-                cursor.execute(f"CREATE DATABASE {db_name}")
-                logging.info("Database created: %s", db_name)
-                return {"status": f"Database created: {db_name}"}
-            else:
-                logging.info("Database already exists: %s", db_name)
-                return {
-                    "connection": "success",
-                    "message": "Database connection successful",
-                    "info": f"Database already exists: {db_name}",
-                }
+            # Create the database tables (if not already present)
+            create_db_and_tables()
+            logging.success("Database tables created successfully.")
 
-    except mysql.connector.Error as err:
-        logging.critical("Error: %s", str(err))
+            return {
+                "connection": "success",
+                "message": "Database connection successful",
+                "info": "Database is ready with table User",
+            }
+
+    except Exception as err:
+        logging.critical(str(err))
         return {
             "connection": "fail",
             "message": "Database connection unsuccessful",
             "info": {"error": str(err)},
         }
-
-    finally:
-        if connection and connection.is_connected():
-            cursor.close()
-            connection.close()
-            logging.info("Database connection closed.")

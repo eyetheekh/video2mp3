@@ -1,6 +1,6 @@
-mysql:
-  host: "localhost"
-  user: "root"
-  password: "root"
-  database_name: "APP_DB" # by default APP_DB
-  port: 3306
+# mysql:
+#   host: "localhost"
+#   user: "root"
+#   password: "root"
+#   database_name: "APP_DB" # by default APP_DB
+#   port: 3306

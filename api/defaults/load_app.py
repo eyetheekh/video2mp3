@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.db.make_or_test_db import make_or_test_db_connection
 from .router import default_router
 from api import logging
+from api.middleware.log_middleware import LoggingMiddleware
 
 
 class FastAPIApp:
@@ -26,6 +27,10 @@ class FastAPIApp:
 
         # Include routers
         self.include_routers()
+
+        # Adding Logging Middleware to the app
+        logging.info("Adding LoggingMiddleware to the app...")
+        self.app.add_middleware(LoggingMiddleware)
 
         # Connect to the database
         db_connection_result = self.connect_to_db()
@@ -76,7 +81,9 @@ class FastAPIApp:
         except ImportError as e:
             logging.critical(f"Could not import endpoints router: {e}")
         except Exception as e:
-            logging.error(f"An error occurred while including the endpoints router: {e}")
+            logging.error(
+                f"An error occurred while including the endpoints router: {e}"
+            )
 
     def return_app(self) -> FastAPI:
         """Return the FastAPI app instance."""

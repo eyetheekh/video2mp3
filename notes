@@ -1,0 +1,12 @@
+completed:
+db support for mysql and sqlite added.
+logging using loguru added for both console and file output.
+logging middleware added.
+
+pending:
+add request log tracking to database.
+continue to add basic auth with keys from yml file.
+configure jwt.
+configure endpoints for functionality.
+configure exception handlers.
+

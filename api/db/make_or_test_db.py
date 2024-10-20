@@ -14,7 +14,7 @@ def get_database_url():
 
     if not config:
         # Default to SQLite
-        logging.info("No valid config found, defaulting to SQLite.")
+        logging.info("No valid database config found, defaulting to SQLite.")
         return "sqlite:///./app_db.db"
 
     elif "mysql" in config:

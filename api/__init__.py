@@ -1,5 +1,5 @@
 import os
-from loguru import logger as logging
+from .logging.logger import logger as logging
 from api.config.load_config import load_db_config
 
 # Load the configuration from the YAML file

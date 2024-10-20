@@ -1,12 +1,7 @@
 from fastapi import APIRouter
-from pydantic import BaseModel
+from api.models import UserModel
 
-endpoint_router = APIRouter(prefix="/api", tags=["api"])
-
-
-class UserModel(BaseModel):
-    username: str
-    password: str
+endpoint_router = APIRouter(tags=["api"])
 
 
 @endpoint_router.post("/register")

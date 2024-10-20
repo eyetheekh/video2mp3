@@ -2,6 +2,8 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from api import logging
 import time
+from api.db import get_session
+from ..db.request_log_to_db import write_request_log_to_db
 
 
 class LoggingMiddleware(BaseHTTPMiddleware):
@@ -19,6 +21,10 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             "PROCESS_TIME": time.time() - start,
             "RESPONSE": response.status_code,
         }
+        
+        # Use 'async with' to properly manage the session
+        async with get_session() as db_session:
+            await write_request_log_to_db(log=log_format_dict, db_session=db_session)
 
         # Log the request
         logging.info(f"Request: {log_format_dict}")

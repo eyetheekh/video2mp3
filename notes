@@ -2,11 +2,14 @@ completed:
 db support for mysql and sqlite added.
 logging using loguru added for both console and file output.
 logging middleware added.
+add request log tracking to database.
 
 pending:
-add request log tracking to database.
 continue to add basic auth with keys from yml file.
+add the fields api keys to the request logging to the db.
 configure jwt.
 configure endpoints for functionality.
 configure exception handlers.
+create endpoints for getting log count from api keys.
+configure to fetch the request queries from the db (requestLogs table) according to the key inputted.
 

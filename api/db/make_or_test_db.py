@@ -2,28 +2,8 @@ import uuid
 from sqlmodel import SQLModel, Field, create_engine, Session
 from api import APP_DB_CONFIG, logging
 from api.db.models import User  # Ensure User is imported
+from api.db import get_database_url
 
-
-def get_database_url():
-    """
-    Returns the database URL based on the provided APP_DB_CONFIG.
-    If APP_DB_CONFIG is not defined or does not contain a valid config,
-    it defaults to SQLite.
-    """
-    config = APP_DB_CONFIG
-
-    if not config:
-        # Default to SQLite
-        logging.info("No valid database config found, defaulting to SQLite.")
-        return "sqlite:///./app_db.db"
-
-    elif "mysql" in config:
-        mysql_config = config["mysql"]
-        return f"mysql+mysqlconnector://{mysql_config['user']}:{mysql_config['password']}@{mysql_config['host']}:{mysql_config['port']}/{mysql_config['database_name']}"
-
-    elif "postgres" in config:
-        postgres_config = config["postgres"]
-        return f"postgresql+psycopg2://{postgres_config['user']}:{postgres_config['password']}@{postgres_config['host']}:{postgres_config['port']}/{postgres_config['database_name']}"
 
 def make_or_test_db_connection():
     """

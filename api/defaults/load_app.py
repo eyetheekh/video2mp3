@@ -1,6 +1,7 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from api.db.make_or_test_db import make_or_test_db_connection
+from api.exceptions.exception_handlers import AppException, DatabaseException
 from .router import default_router
 from api import logging
 from api.middleware.log_middleware import LoggingMiddleware
@@ -20,6 +21,7 @@ class FastAPIApp:
             docs_url="/docs",
             redoc_url="/redoc",
             openapi_url="/openapi.json",
+            swagger_ui_parameters={"defaultModelsExpandDepth": -1},
         )
 
         # Configure CORS
@@ -36,6 +38,9 @@ class FastAPIApp:
         db_connection_result = self.connect_to_db()
         if db_connection_result:
             logging.info(f"Database status: {db_connection_result}")
+
+        # Register exception handlers
+        self.register_exception_handlers()
 
         logging.info("FastAPI app initialized successfully.")
 
@@ -84,6 +89,17 @@ class FastAPIApp:
             logging.error(
                 f"An error occurred while including the endpoints router: {e}"
             )
+
+    def register_exception_handlers(self):
+        """Register custom exception handlers."""
+
+        @self.app.exception_handler(AppException)
+        async def app_exception_handler(request: Request, exc: AppException):
+            raise HTTPException(status_code=exc.status_code, detail=exc.detail)
+
+        @self.app.exception_handler(DatabaseException)
+        async def database_exception_handler(request: Request, exc: DatabaseException):
+            raise HTTPException(status_code=exc.status_code, detail=exc.detail)
 
     def return_app(self) -> FastAPI:
         """Return the FastAPI app instance."""

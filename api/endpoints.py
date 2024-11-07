@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.openapi.models import APIKey
 from api.exceptions.exception_handlers import AppException, DatabaseException
 from api.auth.validate_client import verify_api_key
+from api import logging
 
 # Router for the endpoints
-endpoint_router = APIRouter(tags=["api"])
+endpoint_router = APIRouter(tags=["api"], prefix="")
 
 
 # POST /register with API key authentication and return the client's IP address
@@ -21,11 +22,11 @@ async def login(request: Request, api_key: APIKey = Depends(verify_api_key)):
     return {"status": "ok", "client_ip": client_ip}
 
 
-@endpoint_router.get("/example")
+# @endpoint_router.get("/example")
 async def example_endpoint():
     raise AppException(detail={"error": "This is an application-level error."})
 
 
-@endpoint_router.get("/db-error")
+# @endpoint_router.get("/db-error")
 async def db_error_endpoint():
     raise DatabaseException(detail="Database connection failed.")

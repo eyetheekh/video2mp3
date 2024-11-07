@@ -75,14 +75,23 @@ class FastAPIApp:
     def include_routers(self) -> None:
         """Include routers in the FastAPI application."""
         self.app.include_router(default_router, prefix="/root")
-        logging.info("Included default router with prefix '/root'")
+        logging.info(f"Included default router with prefix '{default_router.prefix}'")
 
         try:
             from api.endpoints import endpoint_router
 
             if endpoint_router:
-                self.app.include_router(endpoint_router, prefix="/endpoints")
-                logging.info("Included endpoints router with prefix '/endpoints'")
+                prefix = endpoint_router.prefix or "/api"
+                if endpoint_router.prefix:
+                    self.app.include_router(endpoint_router)
+                    logging.info(
+                        f"Included endpoints router with custom prefix '{endpoint_router.prefix}'"
+                    )
+                else:
+                    self.app.include_router(endpoint_router, prefix=prefix)
+                    logging.info(
+                        f"Included endpoints router with default prefix '{prefix}'"
+                    )
         except ImportError as e:
             logging.critical(f"Could not import endpoints router: {e}")
         except Exception as e:

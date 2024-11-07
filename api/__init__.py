@@ -13,9 +13,9 @@ try:
 
     # Load the APIKEYS configuration from the YAML file
     apikey_config_path = os.path.join(os.path.dirname(__file__), "./auth/auth.yml")
-    logging.info(f"Attempting to load DB configuration from: {apikey_config_path}")
+    logging.info(f"Attempting to load APIKEYS configuration from: {apikey_config_path}")
     API_KEYS = load_api_keys(apikey_config_path)
-    logging.info(f"Successfully loaded APIKEYS configuration:")
+    logging.info("Successfully loaded APIKEYS configuration from")
 
 except Exception as e:
     logging.critical(f"Failed to load configuration: {e}")

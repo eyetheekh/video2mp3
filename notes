@@ -6,6 +6,8 @@ add request log tracking to database.
 added logging the ip, client key, user-agent to db.
 added exception classes.
 added basic authentication using keys parsed from yaml file.
+added custom router url prefix support
+
 
 pending:
 configure jwt.

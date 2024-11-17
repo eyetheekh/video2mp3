@@ -23,7 +23,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         }
 
         # Use 'async with' to properly manage the session
-        async with get_session() as db_session:
+        async with get_session(for_async_tasks=True) as db_session:
             await write_request_log_to_db(
                 log=log_format_dict, db_session=db_session, request=request
             )

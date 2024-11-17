@@ -206,7 +206,9 @@ async def convert_task(
     ref_id: Optional[UUID] = None,
     files: list[UploadFile] = File(...),
     api_key: APIKey = Depends(verify_api_key),
-    db_session: AsyncSession = Depends(get_session),
+    db_session: AsyncSession = Depends(
+        lambda: get_session(for_async_tasks=True)
+    ),  # Pass parameter to Depends
 ):
     logging.info("Convert endpoint called from IP")
 

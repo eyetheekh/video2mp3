@@ -2,6 +2,8 @@ from sqlmodel import Session, create_engine
 from contextlib import asynccontextmanager
 from api import logging, APP_DB_CONFIG
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
+from contextlib import contextmanager
 
 
 def get_database_url(for_async_tasks=False):
@@ -57,3 +59,16 @@ async def get_session(for_async_tasks=False):
         engine = create_engine(DATABASE_URL, echo=True)
         with Session(engine) as session:
             yield session
+
+
+@contextmanager
+def get_sync_session():
+    DATABASE_URL = get_database_url(for_async_tasks=False)
+    sync_engine = create_engine(DATABASE_URL, echo=True)
+    SyncSession = sessionmaker(bind=sync_engine, autocommit=False, autoflush=False)
+
+    session = SyncSession()
+    try:
+        yield session
+    finally:
+        session.close()

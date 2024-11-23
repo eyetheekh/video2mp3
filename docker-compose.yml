@@ -13,10 +13,9 @@ services:
   redis:
     image: redis
     ports:
-      - "6379:6379" # Redis default port
-
+      - "6379:6379"
 #   mysql:
-#     image: mysql_video2mp3 # Assign a custom name to the built image
+#     image: mysql_video2mp3
 #     build:
 #       context: . # Path to the directory containing the Dockerfile
 #       dockerfile: Dockerfile.mysql # Name of the Dockerfile

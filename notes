@@ -16,3 +16,5 @@ configure exception handlers for entire app.
 create endpoints for getting log count from api keys.
 configure to fetch the request queries from the db (requestLogs table) according to the key inputted.
 
+#
+configure the status endpoint, model task updation is working now

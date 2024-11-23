@@ -7,14 +7,19 @@ added logging the ip, client key, user-agent to db.
 added exception classes.
 added basic authentication using keys parsed from yaml file.
 added custom router url prefix support
-
+configure endpoints for functionality.
 
 pending:
 configure jwt.
-configure endpoints for functionality.
-configure exception handlers for entire app.
+improve  exception handlers for entire app.
 create endpoints for getting log count from api keys.
 configure to fetch the request queries from the db (requestLogs table) according to the key inputted.
 
-#
-configure the status endpoint, model task updation is working now
+# current status
+celery , redis added.
+endpoints updated for convertion ,task status and download functionalities.
+
+# what next
+improve codebase and code cleanup
+improve handling the task,status,errors
+add separate dockerfiles and compose files for dev and prod.
